@@ -348,6 +348,6 @@ pub trait NftContract {
         token_id: String,
         msg: String,
         memo: Option<String>,
-    ) -> PromiseOrValue<bool>;
+    ) -> Promise;
 }  
   
