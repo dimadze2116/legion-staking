@@ -1,22 +1,19 @@
-use near_sdk::near;
-use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::UnorderedMap;
-use near_sdk::AccountId;
+use near_sdk::{near, borsh::{self, BorshDeserialize, BorshSerialize}, AccountId};
 
-#[near(contract_state, serializers = [borsh])]
+#[near(contract_state)]
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Contract {
     pub owner_id: AccountId,
-    pub stakes: UnorderedMap<String, String>,
 }
 
 #[near]
 impl Contract {
     #[init]
     pub fn new(owner_id: AccountId) -> Self {
-        Self { owner_id, stakes: UnorderedMap::new(b"s") }
+        Self { owner_id }
     }
 
-    pub fn stake_len(&self) -> u64 { self.stakes.len() }
-    pub fn get_owner(&self) -> AccountId { self.owner_id.clone() }
+    pub fn get_owner(&self) -> AccountId {
+        self.owner_id.clone()
+    }
 }
