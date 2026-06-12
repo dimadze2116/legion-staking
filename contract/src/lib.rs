@@ -13,7 +13,6 @@ pub const LOCK_10D: u64 = 864_000;
 pub const LOCK_20D: u64 = 1_728_000;
 pub const LOCK_30D: u64 = 2_592_000;
 
-// Storage
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Stake {
     pub owner_id: AccountId,
@@ -25,7 +24,6 @@ pub struct Stake {
     pub last_epoch: u64,
 }
 
-// Views
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct StakeView {
@@ -47,7 +45,6 @@ pub struct Metadata {
     pub epoch_duration: u64,
 }
 
-// Contract
 #[near(contract_state)]
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Contract {
@@ -121,7 +118,7 @@ impl Contract {
         self.epoch_duration = secs;
     }
 
-    // Stake entry
+    // Stake
     pub fn stake(&mut self, nft_contract_id: AccountId, token_id: TokenId, lock_duration_sec: u64) -> Promise {
         let owner = env::predecessor_account_id();
         let msg = format!("{}:{}", lock_duration_sec, owner);
@@ -140,8 +137,8 @@ impl Contract {
     #[private]
     pub fn nft_on_transfer(
         &mut self,
-        sender_id: AccountId,
-        prev: AccountId,
+        _sender_id: AccountId,
+        _prev: AccountId,
         token_id: TokenId,
         msg: String,
     ) -> PromiseOrValue<bool> {
@@ -193,20 +190,23 @@ impl Contract {
     // Unstake
     pub fn unstake(&mut self, token_id: TokenId) -> Promise {
         let owner = env::predecessor_account_id();
-        let s = self.stakes.get(&token_id)
-            .unwrap_or_else(|| env::panic_str("not found"));
-        assert_eq!(s.owner_id, owner, "not yours");
 
-        let nft_contract = s.nft_contract.clone();
-        let token = s.token_id.clone();
+        let existing = self.stakes.get(&token_id)
+            .unwrap_or_else(|| env::panic_str("not found"));
+        assert_eq!(existing.owner_id, owner, "not yours");
+        let nft_contract = existing.nft_contract.clone();
+        let token = existing.token_id.clone();
 
         self.calc_rewards();
         self.stakes.remove(&token_id);
 
         if let Some(mut list) = self.user_stakes.get(&owner) {
-            let ids: Vec<TokenId> = list.to_vec().into_iter()
-                .filter(|t| t != &token_id)
-                .collect();
+            let mut ids: Vec<TokenId> = Vec::new();
+            for t in list.iter() {
+                if t != &token_id {
+                    ids.push(t.clone());
+                }
+            }
             let mut nv = Vector::new(format!("us{}", owner).as_bytes());
             for id in ids {
                 nv.push(id);
@@ -251,8 +251,10 @@ impl Contract {
             self.last_update = cur;
             return;
         }
+
         let pool = self.reward_pool;
         let ts = self.total_staked as u128;
+        let mut pending_add: Vec<(AccountId, u128)> = Vec::new();
 
         for stake_val in self.stakes.values() {
             if !self.is_active(&stake_val) { continue; }
@@ -263,31 +265,35 @@ impl Contract {
             let share = pool * owner_count / ts;
             if share > 0 {
                 let prev = self.pending.get(&stake_val.owner_id).unwrap_or(0);
-                self.pending.insert(stake_val.owner_id.clone(), prev + share);
+                pending_add.push((stake_val.owner_id.clone(), prev + share));
             }
+        }
+
+        for (owner_id, amount) in pending_add {
+            self.pending.insert(owner_id, amount);
         }
         self.last_update = cur;
     }
 
     // Views
     pub fn get_user_stakes(&self, account_id: AccountId) -> Vec<StakeView> {
-        self.user_stakes.get(&account_id)
-            .map(|list| {
-                list.to_vec().into_iter()
-                    .filter_map(|tid| {
-                        self.stakes.get(&tid).map(|s| StakeView {
-                            owner_id: s.owner_id,
-                            token_id: s.token_id,
-                            nft_contract_id: s.nft_contract,
-                            staked_at: s.staked_at,
-                            lock_duration: s.lock_duration,
-                            unlocked_at: s.unlocked_at,
-                            active: self.is_active(&s),
-                        })
-                    })
-                    .collect()
-            })
-            .unwrap_or_default()
+        let mut result = Vec::new();
+        if let Some(list) = self.user_stakes.get(&account_id) {
+            for tid in list.iter() {
+                if let Some(s) = self.stakes.get(&tid) {
+                    result.push(StakeView {
+                        owner_id: s.owner_id,
+                        token_id: s.token_id,
+                        nft_contract_id: s.nft_contract,
+                        staked_at: s.staked_at,
+                        lock_duration: s.lock_duration,
+                        unlocked_at: s.unlocked_at,
+                        active: self.is_active(&s),
+                    });
+                }
+            }
+        }
+        result
     }
 
     pub fn get_user_rewards(&self, account_id: AccountId) -> U128 {
@@ -304,15 +310,19 @@ impl Contract {
     }
 
     pub fn get_stake(&self, token_id: TokenId) -> Option<StakeView> {
-        self.stakes.get(&token_id).map(|s| StakeView {
-            owner_id: s.owner_id,
-            token_id: s.token_id,
-            nft_contract_id: s.nft_contract,
-            staked_at: s.staked_at,
-            lock_duration: s.lock_duration,
-            unlocked_at: s.unlocked_at,
-            active: self.is_active(&s),
-        })
+        if let Some(s) = self.stakes.get(&token_id) {
+            Some(StakeView {
+                owner_id: s.owner_id,
+                token_id: s.token_id,
+                nft_contract_id: s.nft_contract,
+                staked_at: s.staked_at,
+                lock_duration: s.lock_duration,
+                unlocked_at: s.unlocked_at,
+                active: self.is_active(&s),
+            })
+        } else {
+            None
+        }
     }
 
     pub fn get_total_staked(&self) -> u64 {
