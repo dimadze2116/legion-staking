@@ -206,9 +206,9 @@ impl Contract {
                 .collect();
             let mut nv = Vector::new(format!("us{}", owner).as_bytes());
             for id in ids {
-                nv.push(&id);
+                nv.push(id);
             }
-            self.user_stakes.insert(&owner, &nv);
+            self.user_stakes.insert(owner.clone(), nv);
         }
         self.total_staked -= 1;
 
@@ -217,10 +217,10 @@ impl Contract {
             owner, token_id
         ));
 
-        nft_contract::ext(s.nft_contract)
+        nft_contract::ext(nft_contract)
             .with_attached_deposit(NearToken::from_yoctonear(1))
             .with_static_gas(Gas::from_tgas(10))
-            .nft_transfer(owner, token_id, None::<String>)
+            .nft_transfer(owner, token, None::<String>)
     }
 
     // Claim
