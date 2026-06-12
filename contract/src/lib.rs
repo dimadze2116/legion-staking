@@ -1,19 +1,19 @@
 use near_sdk::{
     near, env, NearToken, Promise, PromiseOrValue, Gas,
-    json_types::U128, AccountId,
-    collections::{LookupMap, UnorderedMap, Vector},
-    borsh::{self, BorshDeserialize, BorshSerialize},
+    json_types::U128, AccountId, store::UnorderedMap, store::LookupMap, store::Vector,
+    ext_contract,
 };
 use serde::{Deserialize, Serialize};
+use borsh::{BorshSerialize, BorshDeserialize};
 
 pub type TokenId = String;
 
-// --- Config ---
+// Config
 pub const LOCK_10D: u64 = 864_000;
 pub const LOCK_20D: u64 = 1_728_000;
 pub const LOCK_30D: u64 = 2_592_000;
 
-// --- Storage ---
+// Storage
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Stake {
     pub owner_id: AccountId,
@@ -25,7 +25,7 @@ pub struct Stake {
     pub last_epoch: u64,
 }
 
-// --- Views ---
+// Views
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct StakeView {
@@ -47,7 +47,7 @@ pub struct Metadata {
     pub epoch_duration: u64,
 }
 
-// --- Contract ---
+// Contract
 #[near(contract_state)]
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Contract {
@@ -64,7 +64,7 @@ pub struct Contract {
 impl Default for Contract {
     fn default() -> Self {
         Self {
-            owner_id: AccountId::new_unchecked("placeholder.near".to_string()),
+            owner_id: "placeholder.near".parse().unwrap(),
             stakes: UnorderedMap::new(b"s"),
             user_stakes: LookupMap::new(b"u"),
             total_staked: 0,
@@ -80,13 +80,13 @@ impl Default for Contract {
 impl Contract {
     #[init]
     pub fn new(owner_id: AccountId) -> Self {
+        let now = env::block_timestamp() / 1_000_000_000;
         let mut c = Self::default();
         c.owner_id = owner_id;
-        c.last_update = env::block_timestamp() / 1_000_000_000 / c.epoch_duration;
+        c.last_update = now / c.epoch_duration;
         c
     }
 
-    // --- Helpers ---
     fn only_owner(&self) {
         assert_eq!(env::predecessor_account_id(), self.owner_id, "only owner");
     }
@@ -100,7 +100,7 @@ impl Contract {
         s.unlocked_at > now
     }
 
-    // --- Admin ---
+    // Admin
     #[payable]
     pub fn deposit_rewards(&mut self) {
         self.only_owner();
@@ -121,11 +121,11 @@ impl Contract {
         self.epoch_duration = secs;
     }
 
-    // --- Stake (entry: user calls nft_transfer_call on NFT contract) ---
+    // Stake entry
     pub fn stake(&mut self, nft_contract_id: AccountId, token_id: TokenId, lock_duration_sec: u64) -> Promise {
         let owner = env::predecessor_account_id();
         let msg = format!("{}:{}", lock_duration_sec, owner);
-        Self::ext(nft_contract_id)
+        nft_contract::ext(nft_contract_id)
             .with_attached_deposit(NearToken::from_yoctonear(1))
             .with_static_gas(Gas::from_tgas(10))
             .nft_transfer_call(
@@ -136,7 +136,7 @@ impl Contract {
             )
     }
 
-    // --- NFT callback ---
+    // NFT callback
     #[private]
     pub fn nft_on_transfer(
         &mut self,
@@ -172,7 +172,7 @@ impl Contract {
         };
 
         if self.stakes.insert(&token_id, &stake).is_some() {
-            return PromiseOrValue::Value(false); // already staked
+            return PromiseOrValue::Value(false);
         }
 
         let mut list = self.user_stakes.get(&owner).unwrap_or_else(|| {
@@ -183,14 +183,14 @@ impl Contract {
         self.total_staked += 1;
 
         env::log_str(&format!(
-            "EVENT_JSON:{{\"event\":\"stake\",\"data\":{{\"owner\":\"{}\",\"token\":\"{}\",\"duration\":{}}}}}",
+            r#"EVENT_JSON:{{"event":"stake","data":{{"owner":"{}","token":"{}","duration":{}}}}}"#,
             owner, token_id, dur
         ));
 
         PromiseOrValue::Value(true)
     }
 
-    // --- Unstake ---
+    // Unstake
     pub fn unstake(&mut self, token_id: TokenId) -> Promise {
         let owner = env::predecessor_account_id();
         let s = self.stakes.get(&token_id)
@@ -213,17 +213,17 @@ impl Contract {
         self.total_staked -= 1;
 
         env::log_str(&format!(
-            "EVENT_JSON:{{\"event\":\"unstake\",\"data\":{{\"owner\":\"{}\",\"token\":\"{}\"}}}}",
+            r#"EVENT_JSON:{{"event":"unstake","data":{{"owner":"{}","token":"{}"}}}}"#,
             owner, token_id
         ));
 
-        Self::ext(s.nft_contract)
+        nft_contract::ext(s.nft_contract)
             .with_attached_deposit(NearToken::from_yoctonear(1))
             .with_static_gas(Gas::from_tgas(10))
             .nft_transfer(owner, token_id, None::<String>)
     }
 
-    // --- Claim ---
+    // Claim
     pub fn claim(&mut self) -> Promise {
         let owner = env::predecessor_account_id();
         self.calc_rewards();
@@ -233,19 +233,17 @@ impl Contract {
         self.reward_pool -= amt;
 
         env::log_str(&format!(
-            "EVENT_JSON:{{\"event\":\"claim\",\"data\":{{\"owner\":\"{}\",\"amount\":\"{}\"}}}}",
+            r#"EVENT_JSON:{{"event":"claim","data":{{"owner":"{}","amount":"{}"}}}}"#,
             owner, amt
         ));
 
         Promise::new(owner).transfer(NearToken::from_yoctonear(amt))
     }
 
-    // --- Rewards calculation ---
+    // Rewards
     fn calc_rewards(&mut self) {
         let cur = self.now_epoch();
-        if cur <= self.last_update {
-            return;
-        }
+        if cur <= self.last_update { return; }
         if self.total_staked == 0 || self.reward_pool == 0 {
             self.last_update = cur;
             return;
@@ -253,17 +251,12 @@ impl Contract {
         let pool = self.reward_pool;
         let ts = self.total_staked as u128;
 
-        // Distribute pool proportionally
         for stake_val in self.stakes.values() {
-            if !self.is_active(&stake_val) {
-                continue;
-            }
+            if !self.is_active(&stake_val) { continue; }
             let owner_count = self.user_stakes.get(&stake_val.owner_id)
                 .map(|v| v.len() as u128)
                 .unwrap_or(0);
-            if owner_count == 0 {
-                continue;
-            }
+            if owner_count == 0 { continue; }
             let share = pool * owner_count / ts;
             if share > 0 {
                 let prev = self.pending.get(&stake_val.owner_id).unwrap_or(0);
@@ -273,7 +266,7 @@ impl Contract {
         self.last_update = cur;
     }
 
-    // --- Views ---
+    // Views
     pub fn get_user_stakes(&self, account_id: AccountId) -> Vec<StakeView> {
         self.user_stakes.get(&account_id)
             .map(|list| {
@@ -328,8 +321,8 @@ impl Contract {
     }
 }
 
-// --- NFT interface ---
-#[ext_contract(nft_ext)]
+// NFT interface
+#[ext_contract(nft_contract)]
 pub trait NftContract {
     fn nft_transfer(
         &mut self,

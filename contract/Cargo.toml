@@ -7,7 +7,8 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-near-sdk = "5.28.0"
+near-sdk = { version = "5.28.0", features = ["unstable"] }
+borsh = { version = "1.5.4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
 
 [profile.release]
