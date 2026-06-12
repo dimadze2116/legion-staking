@@ -19,6 +19,8 @@ jobs:
         with:
           target: wasm32-unknown-unknown
       - run: cargo build --target wasm32-unknown-unknown --release
+        env:
+          RUSTFLAGS: ""
       - uses: actions/upload-artifact@v4
         with:
           name: legion-staking-wasm
