@@ -21,6 +21,7 @@ pub struct StakeView {
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Metadata {
+    pub owner_id: AccountId,
     pub total_staked: u64,
     pub reward_pool: U128,
     pub epoch_duration: u64,
@@ -29,6 +30,7 @@ pub struct Metadata {
 #[near(contract_state)]
 #[derive(Default)]
 pub struct Contract {
+    owner_id: AccountId,
     stakes: UnorderedMap<TokenId, StakeData>,
     user_stakes: LookupMap<AccountId, Vector<TokenId>>,
     total_staked: u64,
@@ -38,6 +40,8 @@ pub struct Contract {
     pending: LookupMap<AccountId, u128>,
 }
 
+#[derive(Default)]
+#[near(serializers=[borsh])]
 pub struct StakeData {
     pub owner_id: AccountId,
     pub token_id: TokenId,
@@ -52,18 +56,15 @@ pub struct StakeData {
 impl Contract {
     #[init]
     pub fn new(owner_id: AccountId) -> Self {
-        let mut c = Self::default();
-        c.owner_id_set(owner_id);
-        c.epoch_duration_set(86400);
-        c
+        Self {
+            owner_id,
+            epoch_duration: 86400,
+            ..Default::default()
+        }
     }
-}
 
-// Separate impl for non-init methods
-#[near]
-impl Contract {
     fn only_owner(&self) {
-        assert_eq!(env::predecessor_account_id(), self.owner(), "only owner");
+        assert_eq!(env::predecessor_account_id(), self.owner_id, "only owner");
     }
     fn now_epoch(&self) -> u64 {
         (env::block_timestamp() / 1_000_000_000) / self.epoch_duration
@@ -144,16 +145,15 @@ impl Contract {
         let cur = self.now_epoch();
         if cur <= self.last_update || self.total_staked == 0 { return; }
         if self.reward_pool == 0 { self.last_update = cur; return; }
-        let pool = self.reward_pool;
-        let ts = self.total_staked;
         for s in self.stakes.values() {
-            if !s.active() { continue; }
+            let now = env::block_timestamp() / 1_000_000_000;
+            if s.unlocked_at <= now && s.staked_at + s.lock_duration <= now { continue; }
             let end = s.unlocked_at / self.epoch_duration;
             let until = end.min(cur);
             if until <= s.last_epoch { continue; }
             let count = self.user_stakes.get(&s.owner_id).map(|v| v.len() as u128).unwrap_or(0);
             if count == 0 { continue; }
-            let share = pool * count / ts as u128;
+            let share = self.reward_pool * count / self.total_staked as u128;
             if share > 0 {
                 let prev = self.pending.get(&s.owner_id).unwrap_or(0);
                 self.pending.insert(&s.owner_id, &(prev + share));
@@ -165,14 +165,17 @@ impl Contract {
     pub fn get_user_stakes(&self, account_id: AccountId) -> Vec<StakeView> {
         self.user_stakes.get(&account_id).map(|list| {
             list.to_vec().into_iter().filter_map(|tid| {
-                self.stakes.get(&tid).map(|s| StakeView {
-                    owner_id: s.owner_id,
-                    token_id: s.token_id,
-                    nft_contract_id: s.nft_contract,
-                    staked_at: s.staked_at,
-                    lock_duration: s.lock_duration,
-                    unlocked_at: s.unlocked_at,
-                    active: s.active(),
+                self.stakes.get(&tid).map(|s| {
+                    let now = env::block_timestamp() / 1_000_000_000;
+                    StakeView {
+                        owner_id: s.owner_id,
+                        token_id: s.token_id,
+                        nft_contract_id: s.nft_contract,
+                        staked_at: s.staked_at,
+                        lock_duration: s.lock_duration,
+                        unlocked_at: s.unlocked_at,
+                        active: s.unlocked_at > now || s.staked_at + s.lock_duration > now,
+                    }
                 })
             }).collect()
         }).unwrap_or_default()
@@ -184,6 +187,7 @@ impl Contract {
 
     pub fn get_metadata(&self) -> Metadata {
         Metadata {
+            owner_id: self.owner_id.clone(),
             total_staked: self.total_staked,
             reward_pool: U128::from(self.reward_pool),
             epoch_duration: self.epoch_duration,
@@ -191,25 +195,6 @@ impl Contract {
     }
 }
 
-// Workaround for unstaked state fields using near_bindgen
-#[near]
-impl Contract {
-    pub fn owner(&self) -> AccountId {
-        AccountId::new_unchecked("owner_placeholder.near".to_string())
-    }
-    fn owner_set(&mut self, _o: AccountId) {}
-    pub fn epoch_duration(&self) -> u64 { 86400 }
-    fn epoch_duration_set(&mut self, _d: u64) {}
-}
-
-impl StakeData {
-    fn active(&self) -> bool {
-        let now = env::block_timestamp() / 1_000_000_000;
-        self.unlocked_at > now || self.staked_at + self.lock_duration > now
-    }
-}
-
-// --- NFT ext ---
 #[ext_contract(nft_ext)]
 pub trait NftContract {
     fn nft_transfer(&mut self, receiver_id: AccountId, token_id: String, memo: Option<String>);
