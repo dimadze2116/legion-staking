@@ -1,8 +1,10 @@
 use near_sdk::near;
+use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::UnorderedMap;
 use near_sdk::AccountId;
 
-#[near(contract_state)]
+#[near(contract_state, serializers = [borsh])]
+#[derive(BorshSerialize, BorshDeserialize)]
 pub struct Contract {
     pub owner_id: AccountId,
     pub stakes: UnorderedMap<String, String>,
