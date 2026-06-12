@@ -1,8 +1,8 @@
-use near_sdk::near_bindgen;
+use near_sdk::near;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::AccountId;
 
-#[near_bindgen]
+#[near(contract_state)]
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Contract {
     pub owner_id: AccountId,
@@ -10,11 +10,11 @@ pub struct Contract {
 
 impl Default for Contract {
     fn default() -> Self {
-        Self { owner_id: "placeholder.near".parse().unwrap() }
+        Self { owner_id: AccountId::new_unchecked("test.near".to_string()) }
     }
 }
 
-#[near_bindgen]
+#[near]
 impl Contract {
     #[init]
     pub fn new(owner_id: AccountId) -> Self {
