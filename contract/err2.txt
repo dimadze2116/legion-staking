@@ -1,0 +1,398 @@
+2026-06-12T08:40:51.6922578Z ##[group]Run cargo build --target wasm32-unknown-unknown --release
+2026-06-12T08:40:51.6923144Z [36;1mcargo build --target wasm32-unknown-unknown --release[0m
+2026-06-12T08:40:51.6950662Z shell: /usr/bin/bash -e {0}
+2026-06-12T08:40:51.6950902Z env:
+2026-06-12T08:40:51.6951076Z   CARGO_INCREMENTAL: 0
+2026-06-12T08:40:51.6951278Z   CARGO_PROFILE_DEV_DEBUG: 0
+2026-06-12T08:40:51.6951482Z   CARGO_TERM_COLOR: always
+2026-06-12T08:40:51.6951673Z   RUST_BACKTRACE: short
+2026-06-12T08:40:51.6951864Z   RUSTFLAGS: -D warnings
+2026-06-12T08:40:51.6952067Z   CARGO_UNSTABLE_SPARSE_REGISTRY: true
+2026-06-12T08:40:51.6952320Z   CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+2026-06-12T08:40:51.6952555Z   CACHE_ON_FAILURE: true
+2026-06-12T08:40:51.6952741Z ##[endgroup]
+2026-06-12T08:40:51.8076704Z [1m[92m    Updating[0m crates.io index
+2026-06-12T08:40:52.0592421Z [1m[92m Downloading[0m crates ...
+2026-06-12T08:40:52.0964530Z [1m[92m  Downloaded[0m block-buffer v0.10.4
+2026-06-12T08:40:52.0979752Z [1m[92m  Downloaded[0m wasm-bindgen-shared v0.2.123
+2026-06-12T08:40:52.0993570Z [1m[92m  Downloaded[0m bs58 v0.5.1
+2026-06-12T08:40:52.1016500Z [1m[92m  Downloaded[0m zmij v1.0.21
+2026-06-12T08:40:52.1033897Z [1m[92m  Downloaded[0m wee_alloc v0.4.5
+2026-06-12T08:40:52.1048477Z [1m[92m  Downloaded[0m wasm-bindgen v0.2.123
+2026-06-12T08:40:52.1073535Z [1m[92m  Downloaded[0m darling v0.23.0
+2026-06-12T08:40:52.1120855Z [1m[92m  Downloaded[0m digest v0.10.7
+2026-06-12T08:40:52.1139602Z [1m[92m  Downloaded[0m hashbrown v0.12.3
+2026-06-12T08:40:52.1173711Z [1m[92m  Downloaded[0m futures-core v0.3.32
+2026-06-12T08:40:52.1186909Z [1m[92m  Downloaded[0m wasm-bindgen-macro-support v0.2.123
+2026-06-12T08:40:52.1206925Z [1m[92m  Downloaded[0m near-crypto-hash v0.2.0
+2026-06-12T08:40:52.1216373Z [1m[92m  Downloaded[0m indexmap v1.9.3
+2026-06-12T08:40:52.1246940Z [1m[92m  Downloaded[0m winnow v1.0.3
+2026-06-12T08:40:52.1326577Z [1m[92m  Downloaded[0m near-sdk-env v0.1.1
+2026-06-12T08:40:52.1334971Z [1m[92m  Downloaded[0m time-core v0.1.8
+2026-06-12T08:40:52.1346749Z [1m[92m  Downloaded[0m version_check v0.9.5
+2026-06-12T08:40:52.1360298Z [1m[92m  Downloaded[0m near-sdk-core v4.1.2
+2026-06-12T08:40:52.1376127Z [1m[92m  Downloaded[0m slab v0.4.12
+2026-06-12T08:40:52.1387921Z [1m[92m  Downloaded[0m strum v0.26.3
+2026-06-12T08:40:52.1396979Z [1m[92m  Downloaded[0m ref-cast-impl v1.0.25
+2026-06-12T08:40:52.1405290Z [1m[92m  Downloaded[0m keccak v0.2.0
+2026-06-12T08:40:52.1421940Z [1m[92m  Downloaded[0m toml_datetime v1.1.1+spec-1.1.0
+2026-06-12T08:40:52.1433378Z [1m[92m  Downloaded[0m iana-time-zone v0.1.65
+2026-06-12T08:40:52.1459594Z [1m[92m  Downloaded[0m near-sdk-macros v5.28.1
+2026-06-12T08:40:52.1507624Z [1m[92m  Downloaded[0m tinyvec_macros v0.1.1
+2026-06-12T08:40:52.1514538Z [1m[92m  Downloaded[0m time-macros v0.2.27
+2026-06-12T08:40:52.1535949Z [1m[92m  Downloaded[0m tinyvec v1.11.0
+2026-06-12T08:40:52.1561422Z [1m[92m  Downloaded[0m unicode-ident v1.0.24
+2026-06-12T08:40:52.1587848Z [1m[92m  Downloaded[0m toml_edit v0.25.12+spec-1.1.0
+2026-06-12T08:40:52.1622307Z [1m[92m  Downloaded[0m schemars v0.9.0
+2026-06-12T08:40:52.1736836Z [1m[92m  Downloaded[0m typenum v1.20.1
+2026-06-12T08:40:52.1767671Z [1m[92m  Downloaded[0m memchr v2.8.1
+2026-06-12T08:40:52.1814652Z [1m[92m  Downloaded[0m js-sys v0.3.100
+2026-06-12T08:40:52.1841118Z [1m[92m  Downloaded[0m indexmap v2.14.0
+2026-06-12T08:40:52.1875691Z [1m[92m  Downloaded[0m serde_json v1.0.150
+2026-06-12T08:40:52.1935410Z [1m[92m  Downloaded[0m hashbrown v0.17.1
+2026-06-12T08:40:52.1978096Z [1m[92m  Downloaded[0m time v0.3.47
+2026-06-12T08:40:52.2082391Z [1m[92m  Downloaded[0m chrono v0.4.45
+2026-06-12T08:40:52.2137868Z [1m[92m  Downloaded[0m serde_with v3.21.0
+2026-06-12T08:40:52.2240623Z [1m[92m  Downloaded[0m futures-util v0.3.32
+2026-06-12T08:40:52.2343387Z [1m[92m  Downloaded[0m syn v2.0.117
+2026-06-12T08:40:52.2427845Z [1m[92m  Downloaded[0m near-sdk v5.28.1
+2026-06-12T08:40:52.2530501Z [1m[92m  Downloaded[0m darling_core v0.23.0
+2026-06-12T08:40:52.2579242Z [1m[92m  Downloaded[0m serde_derive v1.0.228
+2026-06-12T08:40:52.2608216Z [1m[92m  Downloaded[0m serde v1.0.228
+2026-06-12T08:40:52.2635748Z [1m[92m  Downloaded[0m schemars v1.2.1
+2026-06-12T08:40:52.2771775Z [1m[92m  Downloaded[0m toml_parser v1.1.2+spec-1.1.0
+2026-06-12T08:40:52.2790241Z [1m[92m  Downloaded[0m serde_core v1.0.228
+2026-06-12T08:40:52.2811933Z [1m[92m  Downloaded[0m num-traits v0.2.19
+2026-06-12T08:40:52.2832893Z [1m[92m  Downloaded[0m sha2 v0.11.0
+2026-06-12T08:40:52.2862290Z [1m[92m  Downloaded[0m proc-macro2 v1.0.106
+2026-06-12T08:40:52.2886045Z [1m[92m  Downloaded[0m log v0.4.32
+2026-06-12T08:40:52.2906495Z [1m[92m  Downloaded[0m sha3 v0.11.0
+2026-06-12T08:40:52.2936609Z [1m[92m  Downloaded[0m serde_with_macros v3.21.0
+2026-06-12T08:40:52.2952096Z [1m[92m  Downloaded[0m rustversion v1.0.22
+2026-06-12T08:40:52.2974082Z [1m[92m  Downloaded[0m quote v1.0.45
+2026-06-12T08:40:52.2995519Z [1m[92m  Downloaded[0m pin-project-lite v0.2.17
+2026-06-12T08:40:52.3040851Z [1m[92m  Downloaded[0m near-gas v0.3.6
+2026-06-12T08:40:52.3056503Z [1m[92m  Downloaded[0m hybrid-array v0.4.12
+2026-06-12T08:40:52.3074134Z [1m[92m  Downloaded[0m ref-cast v1.0.25
+2026-06-12T08:40:52.3097438Z [1m[92m  Downloaded[0m once_cell v1.21.4
+2026-06-12T08:40:52.3117634Z [1m[92m  Downloaded[0m near-global-contracts v0.2.1
+2026-06-12T08:40:52.3126680Z [1m[92m  Downloaded[0m memory_units v0.4.0
+2026-06-12T08:40:52.3133785Z [1m[92m  Downloaded[0m futures-task v0.3.32
+2026-06-12T08:40:52.3143429Z [1m[92m  Downloaded[0m num-conv v0.2.2
+2026-06-12T08:40:52.3150312Z [1m[92m  Downloaded[0m strsim v0.11.1
+2026-06-12T08:40:52.3160721Z [1m[92m  Downloaded[0m ident_case v1.0.1
+2026-06-12T08:40:52.3167448Z [1m[92m  Downloaded[0m near-token v0.3.4
+2026-06-12T08:40:52.3181829Z [1m[92m  Downloaded[0m near-account-id v2.6.0
+2026-06-12T08:40:52.3197502Z [1m[92m  Downloaded[0m libc v0.2.186
+2026-06-12T08:40:52.3504627Z [1m[92m  Downloaded[0m itoa v1.0.18
+2026-06-12T08:40:52.3515866Z [1m[92m  Downloaded[0m proc-macro-crate v3.5.0
+2026-06-12T08:40:52.3526380Z [1m[92m  Downloaded[0m near-sys v0.2.10
+2026-06-12T08:40:52.3531727Z [1m[92m  Downloaded[0m equivalent v1.0.2
+2026-06-12T08:40:52.3539904Z [1m[92m  Downloaded[0m digest-io v0.1.0
+2026-06-12T08:40:52.3548250Z [1m[92m  Downloaded[0m darling_macro v0.23.0
+2026-06-12T08:40:52.3553494Z [1m[92m  Downloaded[0m hex v0.4.3
+2026-06-12T08:40:52.3565660Z [1m[92m  Downloaded[0m heck v0.5.0
+2026-06-12T08:40:52.3575430Z [1m[92m  Downloaded[0m strum_macros v0.26.4
+2026-06-12T08:40:52.3593375Z [1m[92m  Downloaded[0m ripemd v0.1.3
+2026-06-12T08:40:52.3606129Z [1m[92m  Downloaded[0m powerfmt v0.2.0
+2026-06-12T08:40:52.3614907Z [1m[92m  Downloaded[0m generic-array v0.14.7
+2026-06-12T08:40:52.3625782Z [1m[92m  Downloaded[0m digest v0.11.3
+2026-06-12T08:40:52.3643915Z [1m[92m  Downloaded[0m deranged v0.5.8
+2026-06-12T08:40:52.3654657Z [1m[92m  Downloaded[0m crypto-common v0.1.7
+2026-06-12T08:40:52.3661834Z [1m[92m  Downloaded[0m fnv v1.0.7
+2026-06-12T08:40:52.3668609Z [1m[92m  Downloaded[0m dyn-clone v1.0.20
+2026-06-12T08:40:52.3681398Z [1m[92m  Downloaded[0m darling v0.20.11
+2026-06-12T08:40:52.3719407Z [1m[92m  Downloaded[0m cfg_eval v0.1.2
+2026-06-12T08:40:52.3732270Z [1m[92m  Downloaded[0m darling_macro v0.20.11
+2026-06-12T08:40:52.3737506Z [1m[92m  Downloaded[0m darling_core v0.20.11
+2026-06-12T08:40:52.3777474Z [1m[92m  Downloaded[0m cfg_aliases v0.2.1
+2026-06-12T08:40:52.3784760Z [1m[92m  Downloaded[0m cfg-if v1.0.4
+2026-06-12T08:40:52.3796341Z [1m[92m  Downloaded[0m cpufeatures v0.3.0
+2026-06-12T08:40:52.3807596Z [1m[92m  Downloaded[0m cfg-if v0.1.10
+2026-06-12T08:40:52.3816330Z [1m[92m  Downloaded[0m bytes v1.11.1
+2026-06-12T08:40:52.3849459Z [1m[92m  Downloaded[0m crypto-common v0.2.2
+2026-06-12T08:40:52.3858180Z [1m[92m  Downloaded[0m const-oid v0.10.2
+2026-06-12T08:40:52.3877312Z [1m[92m  Downloaded[0m bumpalo v3.20.3
+2026-06-12T08:40:52.3898242Z [1m[92m  Downloaded[0m borsh v1.6.1
+2026-06-12T08:40:52.3953318Z [1m[92m  Downloaded[0m base64 v0.22.1
+2026-06-12T08:40:52.3982976Z [1m[92m  Downloaded[0m borsh-derive v1.6.1
+2026-06-12T08:40:52.4008080Z [1m[92m  Downloaded[0m autocfg v1.5.1
+2026-06-12T08:40:52.4022694Z [1m[92m  Downloaded[0m Inflector v0.11.4
+2026-06-12T08:40:52.4048545Z [1m[92m  Downloaded[0m block-buffer v0.12.1
+2026-06-12T08:40:52.4058068Z [1m[92m  Downloaded[0m wasm-bindgen-macro v0.2.123
+2026-06-12T08:40:52.4554467Z [1m[92m   Compiling[0m proc-macro2 v1.0.106
+2026-06-12T08:40:52.4555064Z [1m[92m   Compiling[0m quote v1.0.45
+2026-06-12T08:40:52.4555510Z [1m[92m   Compiling[0m unicode-ident v1.0.24
+2026-06-12T08:40:52.4555960Z [1m[92m   Compiling[0m typenum v1.20.1
+2026-06-12T08:40:53.9212966Z [1m[92m   Compiling[0m ident_case v1.0.1
+2026-06-12T08:40:53.9474013Z [1m[92m   Compiling[0m hashbrown v0.17.1
+2026-06-12T08:40:54.3968299Z [1m[92m   Compiling[0m serde_core v1.0.228
+2026-06-12T08:40:54.5996690Z [1m[92m   Compiling[0m equivalent v1.0.2
+2026-06-12T08:40:54.6183483Z [1m[92m   Compiling[0m winnow v1.0.3
+2026-06-12T08:40:55.2614822Z [1m[92m   Compiling[0m zmij v1.0.21
+2026-06-12T08:40:56.1797571Z [1m[92m   Compiling[0m toml_parser v1.1.2+spec-1.1.0
+2026-06-12T08:40:56.1956395Z [1m[92m   Compiling[0m indexmap v2.14.0
+2026-06-12T08:40:56.1973079Z [1m[92m   Compiling[0m toml_datetime v1.1.1+spec-1.1.0
+2026-06-12T08:40:56.7218765Z [1m[92m   Compiling[0m toml_edit v0.25.12+spec-1.1.0
+2026-06-12T08:40:56.7596571Z [1m[92m   Compiling[0m hybrid-array v0.4.12
+2026-06-12T08:40:56.8258538Z [1m[92m   Compiling[0m syn v2.0.117
+2026-06-12T08:40:57.1708615Z [1m[92m   Compiling[0m version_check v0.9.5
+2026-06-12T08:40:57.3618760Z [1m[92m   Compiling[0m cfg_aliases v0.2.1
+2026-06-12T08:40:57.3894605Z [1m[92m   Compiling[0m borsh v1.6.1
+2026-06-12T08:40:57.5042475Z [1m[92m   Compiling[0m generic-array v0.14.7
+2026-06-12T08:40:57.5680956Z [1m[92m   Compiling[0m proc-macro-crate v3.5.0
+2026-06-12T08:40:57.5779223Z [1m[92m   Compiling[0m once_cell v1.21.4
+2026-06-12T08:40:57.6848976Z [1m[92m   Compiling[0m serde v1.0.228
+2026-06-12T08:40:57.8249016Z [1m[92m   Compiling[0m strsim v0.11.1
+2026-06-12T08:40:57.9588518Z [1m[92m   Compiling[0m crypto-common v0.2.2
+2026-06-12T08:40:58.0349136Z [1m[92m   Compiling[0m block-buffer v0.12.1
+2026-06-12T08:40:58.1158493Z [1m[92m   Compiling[0m const-oid v0.10.2
+2026-06-12T08:40:58.3008633Z [1m[92m   Compiling[0m serde_json v1.0.150
+2026-06-12T08:40:58.5548464Z [1m[92m   Compiling[0m digest v0.11.3
+2026-06-12T08:40:58.7003543Z [1m[92m   Compiling[0m cfg-if v1.0.4
+2026-06-12T08:40:58.9668356Z [1m[92m   Compiling[0m memchr v2.8.1
+2026-06-12T08:40:59.2888469Z [1m[92m   Compiling[0m darling_core v0.23.0
+2026-06-12T08:40:59.3870666Z [1m[92m   Compiling[0m rustversion v1.0.22
+2026-06-12T08:40:59.5448649Z [1m[92m   Compiling[0m fnv v1.0.7
+2026-06-12T08:40:59.5786858Z [1m[92m   Compiling[0m itoa v1.0.18
+2026-06-12T08:40:59.6488465Z [1m[92m   Compiling[0m darling_core v0.20.11
+2026-06-12T08:41:00.5352392Z [1m[92m   Compiling[0m serde_derive v1.0.228
+2026-06-12T08:41:01.1203418Z [1m[92m   Compiling[0m borsh-derive v1.6.1
+2026-06-12T08:41:01.4228176Z [1m[92m   Compiling[0m darling_macro v0.23.0
+2026-06-12T08:41:01.6059611Z [1m[92m   Compiling[0m darling v0.23.0
+2026-06-12T08:41:01.6348368Z [1m[92m   Compiling[0m serde_with_macros v3.21.0
+2026-06-12T08:41:02.3268353Z [1m[92m   Compiling[0m keccak v0.2.0
+2026-06-12T08:41:02.3297763Z [1m[92m   Compiling[0m crypto-common v0.1.7
+2026-06-12T08:41:02.3714752Z [1m[92m   Compiling[0m block-buffer v0.10.4
+2026-06-12T08:41:02.4363286Z [1m[92m   Compiling[0m bs58 v0.5.1
+2026-06-12T08:41:02.5761510Z [1m[92m   Compiling[0m base64 v0.22.1
+2026-06-12T08:41:02.6379004Z [1m[92m   Compiling[0m hex v0.4.3
+2026-06-12T08:41:02.8118802Z [1m[92m   Compiling[0m serde_with v3.21.0
+2026-06-12T08:41:03.0848550Z [1m[92m   Compiling[0m digest v0.10.7
+2026-06-12T08:41:03.1908485Z [1m[92m   Compiling[0m sha3 v0.11.0
+2026-06-12T08:41:03.4919617Z [1m[92m   Compiling[0m near-account-id v2.6.0
+2026-06-12T08:41:03.5250811Z [1m[92m   Compiling[0m darling_macro v0.20.11
+2026-06-12T08:41:03.6767169Z [1m[92m   Compiling[0m near-sdk-macros v5.28.1
+2026-06-12T08:41:03.7338512Z [1m[92m   Compiling[0m wee_alloc v0.4.5
+2026-06-12T08:41:03.8108501Z [1m[92m   Compiling[0m heck v0.5.0
+2026-06-12T08:41:03.8430719Z [1m[92m   Compiling[0m near-crypto-hash v0.2.0
+2026-06-12T08:41:03.8741653Z [1m[92m   Compiling[0m darling v0.20.11
+2026-06-12T08:41:03.9069706Z [1m[92m   Compiling[0m near-token v0.3.4
+2026-06-12T08:41:03.9378487Z [1m[92m   Compiling[0m strum_macros v0.26.4
+2026-06-12T08:41:04.1618471Z [1m[92m   Compiling[0m near-gas v0.3.6
+2026-06-12T08:41:04.4394849Z [1m[92m   Compiling[0m ripemd v0.1.3
+2026-06-12T08:41:04.4448223Z [1m[92m   Compiling[0m cfg_eval v0.1.2
+2026-06-12T08:41:04.6231633Z [1m[92m   Compiling[0m sha2 v0.11.0
+2026-06-12T08:41:04.9858520Z [1m[92m   Compiling[0m digest-io v0.1.0
+2026-06-12T08:41:05.0313908Z [1m[92m   Compiling[0m cfg-if v0.1.10
+2026-06-12T08:41:05.0585861Z [1m[92m   Compiling[0m strum v0.26.3
+2026-06-12T08:41:05.0988376Z [1m[92m   Compiling[0m Inflector v0.11.4
+2026-06-12T08:41:05.2248817Z [1m[92m   Compiling[0m memory_units v0.4.0
+2026-06-12T08:41:05.2650803Z [1m[92m   Compiling[0m near-sdk-env v0.1.1
+2026-06-12T08:41:05.4119006Z [1m[92m   Compiling[0m near-global-contracts v0.2.1
+2026-06-12T08:41:05.4285573Z [1m[92m   Compiling[0m near-sdk-core v4.1.2
+2026-06-12T08:41:05.6068755Z [1m[92m   Compiling[0m near-sys v0.2.10
+2026-06-12T08:41:05.9721925Z [1m[92m   Compiling[0m near-sdk v5.28.1
+2026-06-12T08:41:06.4700632Z [1m[92m   Compiling[0m legion-staking v1.0.0 (/home/runner/work/legion-staking/legion-staking/contract)
+2026-06-12T08:41:06.5095649Z [1m[91merror[E0428][0m[1m: the name `CONTRACT_SOURCE_METADATA` is defined multiple times[0m
+2026-06-12T08:41:06.5108755Z ##[error]   [1m[94m--> [0msrc/lib.rs:209:1
+2026-06-12T08:41:06.5114250Z     [1m[94m|[0m
+2026-06-12T08:41:06.5114576Z [1m[94m 30[0m [1m[94m|[0m #[near(contract_state)]
+2026-06-12T08:41:06.5115114Z     [1m[94m|[0m [1m[94m-----------------------[0m [1m[94mprevious definition of the value `CONTRACT_SOURCE_METADATA` here[0m
+2026-06-12T08:41:06.5115553Z [1m[94m...[0m
+2026-06-12T08:41:06.5115810Z [1m[94m209[0m [1m[94m|[0m #[near(contract_state)]
+2026-06-12T08:41:06.5116240Z     [1m[94m|[0m [1m[91m^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91m`CONTRACT_SOURCE_METADATA` redefined here[0m
+2026-06-12T08:41:06.5116585Z     [1m[94m|[0m
+2026-06-12T08:41:06.5117015Z     [1m[94m= [0m[1mnote[0m: `CONTRACT_SOURCE_METADATA` must be defined only once in the value namespace of this module
+2026-06-12T08:41:06.5120552Z     [1m[94m= [0m[1mnote[0m: this error originates in the attribute macro `::near_sdk::near_bindgen` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-06-12T08:41:06.5121030Z 
+2026-06-12T08:41:06.5121415Z [1m[91merror[E0428][0m[1m: the name `contract_source_metadata` is defined multiple times[0m
+2026-06-12T08:41:06.5122483Z ##[error]   [1m[94m--> [0msrc/lib.rs:209:1
+2026-06-12T08:41:06.5123267Z     [1m[94m|[0m
+2026-06-12T08:41:06.5123523Z [1m[94m 30[0m [1m[94m|[0m #[near(contract_state)]
+2026-06-12T08:41:06.5124022Z     [1m[94m|[0m [1m[94m-----------------------[0m [1m[94mprevious definition of the value `contract_source_metadata` here[0m
+2026-06-12T08:41:06.5124441Z [1m[94m...[0m
+2026-06-12T08:41:06.5124687Z [1m[94m209[0m [1m[94m|[0m #[near(contract_state)]
+2026-06-12T08:41:06.5125080Z     [1m[94m|[0m [1m[91m^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91m`contract_source_metadata` redefined here[0m
+2026-06-12T08:41:06.5125408Z     [1m[94m|[0m
+2026-06-12T08:41:06.5125819Z     [1m[94m= [0m[1mnote[0m: `contract_source_metadata` must be defined only once in the value namespace of this module
+2026-06-12T08:41:06.5127184Z     [1m[94m= [0m[1mnote[0m: this error originates in the attribute macro `::near_sdk::near_bindgen` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-06-12T08:41:06.5127603Z 
+2026-06-12T08:41:06.5127881Z [1m[91merror[E0428][0m[1m: the name `TokenStake` is defined multiple times[0m
+2026-06-12T08:41:06.5128460Z ##[error]   [1m[94m--> [0msrc/lib.rs:210:1
+2026-06-12T08:41:06.5129080Z     [1m[94m|[0m
+2026-06-12T08:41:06.5129329Z [1m[94m 42[0m [1m[94m|[0m struct TokenStake {
+2026-06-12T08:41:06.5129773Z     [1m[94m|[0m [1m[94m-----------------[0m [1m[94mprevious definition of the type `TokenStake` here[0m
+2026-06-12T08:41:06.5130144Z [1m[94m...[0m
+2026-06-12T08:41:06.5130393Z [1m[94m210[0m [1m[94m|[0m pub struct TokenStake {
+2026-06-12T08:41:06.5130767Z     [1m[94m|[0m [1m[91m^^^^^^^^^^^^^^^^^^^^^[0m [1m[91m`TokenStake` redefined here[0m
+2026-06-12T08:41:06.5131073Z     [1m[94m|[0m
+2026-06-12T08:41:06.5131454Z     [1m[94m= [0m[1mnote[0m: `TokenStake` must be defined only once in the type namespace of this module
+2026-06-12T08:41:06.5131736Z 
+2026-06-12T08:41:06.5132024Z [1m[91merror[0m[1m: near macro can only be used on struct or enum definition and impl sections.[0m
+2026-06-12T08:41:06.5132664Z ##[error]   [1m[94m--> [0msrc/lib.rs:227:1
+2026-06-12T08:41:06.5133220Z     [1m[94m|[0m
+2026-06-12T08:41:06.5133432Z [1m[94m227[0m [1m[94m|[0m #[near]
+2026-06-12T08:41:06.5133677Z     [1m[94m|[0m [1m[91m^^^^^^^[0m
+2026-06-12T08:41:06.5133899Z     [1m[94m|[0m
+2026-06-12T08:41:06.5134389Z     [1m[94m= [0m[1mnote[0m: this error originates in the attribute macro `near` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-06-12T08:41:06.5134761Z 
+2026-06-12T08:41:06.5143901Z [1m[91merror[0m[1m: unused import: `log`[0m
+2026-06-12T08:41:06.5144450Z ##[error] [1m[94m--> [0msrc/lib.rs:2:44
+2026-06-12T08:41:06.5145119Z   [1m[94m|[0m
+2026-06-12T08:41:06.5145639Z [1m[94m2[0m [1m[94m|[0m     near, store::{LookupMap, Vector}, env, log, NearToken, Promise, PromiseOrValue,
+2026-06-12T08:41:06.5146098Z   [1m[94m|[0m                                            [1m[91m^^^[0m
+2026-06-12T08:41:06.5146366Z   [1m[94m|[0m
+2026-06-12T08:41:06.5146700Z   [1m[94m= [0m[1mnote[0m: `-D unused-imports` implied by `-D warnings`
+2026-06-12T08:41:06.5147336Z   [1m[94m= [0m[1mhelp[0m: to override `-D warnings` add `#[allow(unused_imports)]`
+2026-06-12T08:41:06.5147575Z 
+2026-06-12T08:41:06.5463616Z [1m[91merror[E0308][0m[1m: mismatched types[0m
+2026-06-12T08:41:06.5464630Z ##[error]   [1m[94m--> [0msrc/lib.rs:88:52
+2026-06-12T08:41:06.5465834Z     [1m[94m|[0m
+2026-06-12T08:41:06.5466273Z [1m[94m 87[0m [1m[94m|[0m             for id in ids { nv.push(&id); }
+2026-06-12T08:41:06.5467314Z     [1m[94m|[0m                             [1m[94m--[0m      [1m[94m---[0m [1m[94mthis argument has type `&std::string::String`...[0m
+2026-06-12T08:41:06.5467802Z     [1m[94m|[0m                             [1m[94m|[0m
+2026-06-12T08:41:06.5468344Z     [1m[94m|[0m                             [1m[94m... which causes `nv` to have type `near_sdk::store::Vector<&std::string::String>`[0m
+2026-06-12T08:41:06.5468862Z [1m[94m 88[0m [1m[94m|[0m             self.user_stakes.insert(owner.clone(), nv);
+2026-06-12T08:41:06.5469424Z     [1m[94m|[0m                              [1m[94m------[0m                [1m[91m^^[0m [1m[91mexpected `Vector<String>`, found `Vector<&String>`[0m
+2026-06-12T08:41:06.5470127Z     [1m[94m|[0m                              [1m[94m|[0m
+2026-06-12T08:41:06.5470501Z     [1m[94m|[0m                              [1m[94marguments to this method are incorrect[0m
+2026-06-12T08:41:06.5470814Z     [1m[94m|[0m
+2026-06-12T08:41:06.5471203Z     [1m[94m= [0m[1mnote[0m: expected struct `near_sdk::store::Vector<std::string::String>`
+2026-06-12T08:41:06.5471702Z                found struct `near_sdk::store::Vector<[1m[35m&[0mstd::string::String>`
+2026-06-12T08:41:06.5472679Z [1m[96mhelp[0m: the return type of this call is `near_sdk::store::Vector<&std::string::String>` due to the type of the argument passed
+2026-06-12T08:41:06.5473149Z    [1m[94m--> [0msrc/lib.rs:88:13
+2026-06-12T08:41:06.5473384Z     [1m[94m|[0m
+2026-06-12T08:41:06.5473884Z [1m[94m 88[0m [1m[94m|[0m             self.user_stakes.insert(owner.clone(), nv);
+2026-06-12T08:41:06.5474577Z     [1m[94m|[0m             [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[1m[94m--[0m[1m[96m^[0m
+2026-06-12T08:41:06.5475150Z     [1m[94m|[0m                                                    [1m[94m|[0m
+2026-06-12T08:41:06.5475871Z     [1m[94m|[0m                                                    [1m[94mthis argument influences the return type of `insert`[0m
+2026-06-12T08:41:06.5476470Z [1m[92mnote[0m: method defined here
+2026-06-12T08:41:06.5477400Z    [1m[94m--> [0m/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/near-sdk-5.28.1/src/store/lookup_map/mod.rs:318:12
+2026-06-12T08:41:06.5478144Z     [1m[94m|[0m
+2026-06-12T08:41:06.5478532Z [1m[94m318[0m [1m[94m|[0m     pub fn insert(&mut self, k: K, v: V) -> Option<V>
+2026-06-12T08:41:06.5478891Z     [1m[94m|[0m            [1m[92m^^^^^^[0m
+2026-06-12T08:41:06.5479181Z [1m[96mhelp[0m: consider removing the borrow
+2026-06-12T08:41:06.5479430Z     [1m[94m|[0m
+2026-06-12T08:41:06.5479712Z [1m[94m 87[0m [91m- [0m            for id in ids { nv.push([91m&[0mid); }
+2026-06-12T08:41:06.5480079Z [1m[94m 87[0m [92m+ [0m            for id in ids { nv.push(id); }
+2026-06-12T08:41:06.5480358Z     [1m[94m|[0m
+2026-06-12T08:41:06.5480457Z 
+2026-06-12T08:41:06.5482326Z [1m[91merror[E0308][0m[1m: mismatched types[0m
+2026-06-12T08:41:06.5482955Z ##[error]   [1m[94m--> [0msrc/lib.rs:138:13
+2026-06-12T08:41:06.5483702Z     [1m[94m|[0m
+2026-06-12T08:41:06.5484071Z [1m[94m138[0m [1m[94m|[0m             Vector::new(format!("u{owner}").as_bytes())
+2026-06-12T08:41:06.5484592Z     [1m[94m|[0m             [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mexpected `&Vector<String>`, found `Vector<_>`[0m
+2026-06-12T08:41:06.5484960Z     [1m[94m|[0m
+2026-06-12T08:41:06.5485412Z     [1m[94m= [0m[1mnote[0m: expected reference `[1m[35m&[0mnear_sdk::store::Vector<[1m[35mstd::string::String[0m>`
+2026-06-12T08:41:06.5485905Z                   found struct `near_sdk::store::Vector<[1m[35m_[0m>`
+2026-06-12T08:41:06.5486226Z [1m[96mhelp[0m: consider borrowing here
+2026-06-12T08:41:06.5486475Z     [1m[94m|[0m
+2026-06-12T08:41:06.5486825Z [1m[94m138[0m [1m[94m| [0m            [92m&[0mVector::new(format!("u{owner}").as_bytes())
+2026-06-12T08:41:06.5487365Z     [1m[94m|[0m             [92m+[0m
+2026-06-12T08:41:06.5487511Z 
+2026-06-12T08:41:06.5491782Z [1m[91merror[E0308][0m[1m: mismatched types[0m
+2026-06-12T08:41:06.5492502Z ##[error]   [1m[94m--> [0msrc/lib.rs:140:19
+2026-06-12T08:41:06.5493240Z     [1m[94m|[0m
+2026-06-12T08:41:06.5493508Z [1m[94m140[0m [1m[94m|[0m         list.push(&token_id);
+2026-06-12T08:41:06.5493939Z     [1m[94m|[0m              [1m[94m----[0m [1m[91m^^^^^^^^^[0m [1m[91mexpected `String`, found `&String`[0m
+2026-06-12T08:41:06.5494329Z     [1m[94m|[0m              [1m[94m|[0m
+2026-06-12T08:41:06.5494655Z     [1m[94m|[0m              [1m[94marguments to this method are incorrect[0m
+2026-06-12T08:41:06.5494948Z     [1m[94m|[0m
+2026-06-12T08:41:06.5495160Z [1m[92mnote[0m: method defined here
+2026-06-12T08:41:06.5495672Z    [1m[94m--> [0m/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/near-sdk-5.28.1/src/store/vec/mod.rs:275:12
+2026-06-12T08:41:06.5496134Z     [1m[94m|[0m
+2026-06-12T08:41:06.5496415Z [1m[94m275[0m [1m[94m|[0m     pub fn push(&mut self, element: T) {
+2026-06-12T08:41:06.5496761Z     [1m[94m|[0m            [1m[92m^^^^[0m
+2026-06-12T08:41:06.5497243Z [1m[96mhelp[0m: consider removing the borrow
+2026-06-12T08:41:06.5497795Z     [1m[94m|[0m
+2026-06-12T08:41:06.5498075Z [1m[94m140[0m [91m- [0m        list.push([91m&[0mtoken_id);
+2026-06-12T08:41:06.5498412Z [1m[94m140[0m [92m+ [0m        list.push(token_id);
+2026-06-12T08:41:06.5498671Z     [1m[94m|[0m
+2026-06-12T08:41:06.5498774Z 
+2026-06-12T08:41:06.5508090Z [1m[91merror[E0308][0m[1m: mismatched types[0m
+2026-06-12T08:41:06.5508820Z ##[error]   [1m[94m--> [0msrc/lib.rs:141:40
+2026-06-12T08:41:06.5509519Z     [1m[94m|[0m
+2026-06-12T08:41:06.5509802Z [1m[94m141[0m [1m[94m|[0m         self.user_stakes.insert(owner, list);
+2026-06-12T08:41:06.5510330Z     [1m[94m|[0m                          [1m[94m------[0m        [1m[91m^^^^[0m [1m[91mexpected `Vector<String>`, found `&Vector<String>`[0m
+2026-06-12T08:41:06.5510776Z     [1m[94m|[0m                          [1m[94m|[0m
+2026-06-12T08:41:06.5511143Z     [1m[94m|[0m                          [1m[94marguments to this method are incorrect[0m
+2026-06-12T08:41:06.5511467Z     [1m[94m|[0m
+2026-06-12T08:41:06.5511804Z     [1m[94m= [0m[1mnote[0m: expected struct `near_sdk::store::Vector<_>`
+2026-06-12T08:41:06.5512210Z             found reference `[1m[35m&[0mnear_sdk::store::Vector<_>`
+2026-06-12T08:41:06.5512815Z [1m[96mhelp[0m: the return type of this call is `&near_sdk::store::Vector<std::string::String>` due to the type of the argument passed
+2026-06-12T08:41:06.5513309Z    [1m[94m--> [0msrc/lib.rs:141:9
+2026-06-12T08:41:06.5513534Z     [1m[94m|[0m
+2026-06-12T08:41:06.5513813Z [1m[94m141[0m [1m[94m|[0m         self.user_stakes.insert(owner, list);
+2026-06-12T08:41:06.5514230Z     [1m[94m|[0m         [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[1m[94m----[0m[1m[96m^[0m
+2026-06-12T08:41:06.5514587Z     [1m[94m|[0m                                        [1m[94m|[0m
+2026-06-12T08:41:06.5515014Z     [1m[94m|[0m                                        [1m[94mthis argument influences the return type of `insert`[0m
+2026-06-12T08:41:06.5515395Z [1m[92mnote[0m: method defined here
+2026-06-12T08:41:06.5515934Z    [1m[94m--> [0m/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/near-sdk-5.28.1/src/store/lookup_map/mod.rs:318:12
+2026-06-12T08:41:06.5516395Z     [1m[94m|[0m
+2026-06-12T08:41:06.5516836Z [1m[94m318[0m [1m[94m|[0m     pub fn insert(&mut self, k: K, v: V) -> Option<V>
+2026-06-12T08:41:06.5517386Z     [1m[94m|[0m            [1m[92m^^^^^^[0m
+2026-06-12T08:41:06.5517548Z 
+2026-06-12T08:41:06.5546743Z [1m[91merror[E0599][0m[1m: no method named `iter` found for struct `LookupMap<K, V, H>` in the current scope[0m
+2026-06-12T08:41:06.5547642Z ##[error]   [1m[94m--> [0msrc/lib.rs:152:34
+2026-06-12T08:41:06.5548298Z     [1m[94m|[0m
+2026-06-12T08:41:06.5548580Z [1m[94m152[0m [1m[94m|[0m         for entry in self.stakes.iter() {
+2026-06-12T08:41:06.5549166Z     [1m[94m|[0m                                  [1m[91m^^^^[0m [1m[91mmethod not found in `LookupMap<std::string::String, TokenStake>`[0m
+2026-06-12T08:41:06.5549487Z 
+2026-06-12T08:41:06.5560642Z [1m[91merror[E0277][0m[1m: the trait bound `std::string::String: Borrow<&std::string::String>` is not satisfied[0m
+2026-06-12T08:41:06.5561562Z ##[error]   [1m[94m--> [0msrc/lib.rs:175:33
+2026-06-12T08:41:06.5562215Z     [1m[94m|[0m
+2026-06-12T08:41:06.5562520Z [1m[94m175[0m [1m[94m|[0m                 self.stakes.get(&tid).map(|s| StakeView {
+2026-06-12T08:41:06.5563207Z     [1m[94m|[0m                             [1m[94m---[0m [1m[91m^^^^[0m [1m[91mthe trait `Borrow<&std::string::String>` is not implemented for `std::string::String`[0m
+2026-06-12T08:41:06.5563736Z     [1m[94m|[0m                             [1m[94m|[0m
+2026-06-12T08:41:06.5564123Z     [1m[94m|[0m                             [1m[94mrequired by a bound introduced by this call[0m
+2026-06-12T08:41:06.5564440Z     [1m[94m|[0m
+2026-06-12T08:41:06.5564922Z [1m[96mhelp[0m: the trait `Borrow<[1m[35m&[0m[1m[35mstd::string::String[0m>` [1m[35mis not[0m implemented for `std::string::String`
+2026-06-12T08:41:06.5565751Z       but trait `Borrow<[1m[35mstr[0m>` [1m[35mis[0m implemented for it
+2026-06-12T08:41:06.5566247Z    [1m[94m--> [0m/rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/alloc/src/str.rs:189:0
+2026-06-12T08:41:06.5566908Z     [1m[94m= [0m[1mhelp[0m: for that trait implementation, expected `[1m[35mstr[0m`, found `[1m[35m&std::string::String[0m`
+2026-06-12T08:41:06.5567772Z [1m[92mnote[0m: required by a bound in `LookupMap::<K, V, H>::get`
+2026-06-12T08:41:06.5568748Z    [1m[94m--> [0m/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/near-sdk-5.28.1/src/store/lookup_map/mod.rs:244:12
+2026-06-12T08:41:06.5569440Z     [1m[94m|[0m
+2026-06-12T08:41:06.5569766Z [1m[94m242[0m [1m[94m|[0m     pub fn get<Q: ?Sized>(&self, k: &Q) -> Option<&V>
+2026-06-12T08:41:06.5570233Z     [1m[94m|[0m            [1m[94m---[0m [1m[94mrequired by a bound in this associated function[0m
+2026-06-12T08:41:06.5570614Z [1m[94m243[0m [1m[94m|[0m     where
+2026-06-12T08:41:06.5570896Z [1m[94m244[0m [1m[94m|[0m         K: Borrow<Q>,
+2026-06-12T08:41:06.5571363Z     [1m[94m|[0m            [1m[92m^^^^^^^^^[0m [1m[92mrequired by this bound in `LookupMap::<K, V, H>::get`[0m
+2026-06-12T08:41:06.5571668Z 
+2026-06-12T08:41:06.5572026Z [1m[91merror[E0271][0m[1m: type mismatch resolving `<&String as ToOwned>::Owned == String`[0m
+2026-06-12T08:41:06.5572686Z ##[error]   [1m[94m--> [0msrc/lib.rs:175:33
+2026-06-12T08:41:06.5573317Z     [1m[94m|[0m
+2026-06-12T08:41:06.5573620Z [1m[94m175[0m [1m[94m|[0m                 self.stakes.get(&tid).map(|s| StakeView {
+2026-06-12T08:41:06.5574097Z     [1m[94m|[0m                             [1m[94m---[0m [1m[91m^^^^[0m [1m[91mexpected `String`, found `&String`[0m
+2026-06-12T08:41:06.5574487Z     [1m[94m|[0m                             [1m[94m|[0m
+2026-06-12T08:41:06.5574872Z     [1m[94m|[0m                             [1m[94mrequired by a bound introduced by this call[0m
+2026-06-12T08:41:06.5575189Z     [1m[94m|[0m
+2026-06-12T08:41:06.5575495Z [1m[92mnote[0m: required by a bound in `LookupMap::<K, V, H>::get`
+2026-06-12T08:41:06.5576078Z    [1m[94m--> [0m/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/near-sdk-5.28.1/src/store/lookup_map/mod.rs:245:37
+2026-06-12T08:41:06.5576544Z     [1m[94m|[0m
+2026-06-12T08:41:06.5576840Z [1m[94m242[0m [1m[94m|[0m     pub fn get<Q: ?Sized>(&self, k: &Q) -> Option<&V>
+2026-06-12T08:41:06.5577502Z     [1m[94m|[0m            [1m[94m---[0m [1m[94mrequired by a bound in this associated function[0m
+2026-06-12T08:41:06.5577847Z [1m[94m...[0m
+2026-06-12T08:41:06.5578148Z [1m[94m245[0m [1m[94m|[0m         Q: BorshSerialize + ToOwned<Owned = K>,
+2026-06-12T08:41:06.5578696Z     [1m[94m|[0m                                     [1m[92m^^^^^^^^^[0m [1m[92mrequired by this bound in `LookupMap::<K, V, H>::get`[0m
+2026-06-12T08:41:06.5578996Z 
+2026-06-12T08:41:06.5605021Z [1m[91merror[E0277][0m[1m: the trait bound `StakingContract: Default` is not satisfied[0m
+2026-06-12T08:41:06.5605789Z ##[error]  [1m[94m--> [0msrc/lib.rs:52:1
+2026-06-12T08:41:06.5606510Z    [1m[94m|[0m
+2026-06-12T08:41:06.5606739Z [1m[94m52[0m [1m[94m|[0m #[near]
+2026-06-12T08:41:06.5607255Z    [1m[94m|[0m [1m[91m^^^^^^^[0m [1m[91munsatisfied trait bound[0m
+2026-06-12T08:41:06.5607576Z    [1m[94m|[0m
+2026-06-12T08:41:06.5607888Z [1m[96mhelp[0m: the trait `Default` is not implemented for `StakingContract`
+2026-06-12T08:41:06.5608219Z   [1m[94m--> [0msrc/lib.rs:31:1
+2026-06-12T08:41:06.5608436Z    [1m[94m|[0m
+2026-06-12T08:41:06.5608692Z [1m[94m31[0m [1m[94m|[0m pub struct StakingContract {
+2026-06-12T08:41:06.5609005Z    [1m[94m|[0m [1m[96m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+2026-06-12T08:41:06.5609456Z [1m[92mnote[0m: required by a bound in `std::option::Option::<T>::unwrap_or_default`
+2026-06-12T08:41:06.5610288Z   [1m[94m--> [0m/rustc/ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96/library/core/src/option.rs:1093:4
+2026-06-12T08:41:06.5611067Z    [1m[94m= [0m[1mnote[0m: this error originates in the attribute macro `::near_sdk::near_bindgen` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-06-12T08:41:06.5611479Z 
+2026-06-12T08:41:06.6070893Z [1mSome errors have detailed explanations: E0271, E0277, E0308, E0428, E0599.[0m
+2026-06-12T08:41:06.6071441Z [1mFor more information about an error, try `rustc --explain E0271`.[0m
+2026-06-12T08:41:06.6118670Z [1m[91merror[0m: could not compile `legion-staking` (lib) due to 13 previous errors
+2026-06-12T08:41:06.6787585Z ##[error]Process completed with exit code 101.
