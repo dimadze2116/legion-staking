@@ -171,15 +171,15 @@ impl Contract {
             last_epoch: epoch,
         };
 
-        if self.stakes.insert(&token_id, &stake).is_some() {
+        if self.stakes.insert(token_id.clone(), stake).is_some() {
             return PromiseOrValue::Value(false);
         }
 
         let mut list = self.user_stakes.get(&owner).unwrap_or_else(|| {
             Vector::new(format!("us{}", owner).as_bytes())
         });
-        list.push(&token_id);
-        self.user_stakes.insert(&owner, &list);
+        list.push(token_id.clone());
+        self.user_stakes.insert(owner.clone(), list);
         self.total_staked += 1;
 
         env::log_str(&format!(
@@ -196,6 +196,9 @@ impl Contract {
         let s = self.stakes.get(&token_id)
             .unwrap_or_else(|| env::panic_str("not found"));
         assert_eq!(s.owner_id, owner, "not yours");
+
+        let nft_contract = s.nft_contract.clone();
+        let token = s.token_id.clone();
 
         self.calc_rewards();
         self.stakes.remove(&token_id);
@@ -229,7 +232,7 @@ impl Contract {
         self.calc_rewards();
         let amt = self.pending.get(&owner).unwrap_or(0);
         assert!(amt > 0, "no rewards");
-        self.pending.insert(&owner, &0);
+        self.pending.insert(owner.clone(), 0u128);
         self.reward_pool -= amt;
 
         env::log_str(&format!(
@@ -260,7 +263,7 @@ impl Contract {
             let share = pool * owner_count / ts;
             if share > 0 {
                 let prev = self.pending.get(&stake_val.owner_id).unwrap_or(0);
-                self.pending.insert(&stake_val.owner_id, &(prev + share));
+                self.pending.insert(stake_val.owner_id.clone(), prev + share);
             }
         }
         self.last_update = cur;
@@ -325,14 +328,12 @@ impl Contract {
 #[ext_contract(nft_contract)]
 pub trait NftContract {
     fn nft_transfer(
-        &mut self,
         receiver_id: AccountId,
         token_id: String,
         memo: Option<String>,
     );
 
     fn nft_transfer_call(
-        &mut self,
         receiver_id: AccountId,
         token_id: String,
         msg: String,
