@@ -349,4 +349,5 @@ pub trait NftContract {
         msg: String,
         memo: Option<String>,
     ) -> PromiseOrValue<bool>;
-}
+}  
+  
