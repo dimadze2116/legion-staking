@@ -1,12 +1,20 @@
-use near_sdk::{near, borsh::{self, BorshDeserialize, BorshSerialize}, AccountId};
+use near_sdk::near_bindgen;
+use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
+use near_sdk::AccountId;
 
-#[near(contract_state)]
+#[near_bindgen]
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Contract {
     pub owner_id: AccountId,
 }
 
-#[near]
+impl Default for Contract {
+    fn default() -> Self {
+        Self { owner_id: "placeholder.near".parse().unwrap() }
+    }
+}
+
+#[near_bindgen]
 impl Contract {
     #[init]
     pub fn new(owner_id: AccountId) -> Self {
