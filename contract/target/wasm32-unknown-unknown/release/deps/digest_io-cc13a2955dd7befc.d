@@ -1,0 +1,11 @@
+C:\bot3\contract\target\wasm32-unknown-unknown\release\deps\digest_io-cc13a2955dd7befc.d: C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\lib.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\io_wrapper.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\reader.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\writer.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\../README.md
+
+C:\bot3\contract\target\wasm32-unknown-unknown\release\deps\libdigest_io-cc13a2955dd7befc.rlib: C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\lib.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\io_wrapper.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\reader.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\writer.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\../README.md
+
+C:\bot3\contract\target\wasm32-unknown-unknown\release\deps\libdigest_io-cc13a2955dd7befc.rmeta: C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\lib.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\io_wrapper.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\reader.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\writer.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\../README.md
+
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\lib.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\io_wrapper.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\reader.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\writer.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\digest-io-0.1.0\src\../README.md:

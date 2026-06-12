@@ -1,0 +1,11 @@
+C:\bot3\contract\target\wasm32-unknown-unknown\release\deps\wee_alloc-c6246fa38419d419.d: C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\lib.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\extra_assert.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\const_init.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\neighbors.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\imp_wasm32.rs
+
+C:\bot3\contract\target\wasm32-unknown-unknown\release\deps\libwee_alloc-c6246fa38419d419.rlib: C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\lib.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\extra_assert.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\const_init.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\neighbors.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\imp_wasm32.rs
+
+C:\bot3\contract\target\wasm32-unknown-unknown\release\deps\libwee_alloc-c6246fa38419d419.rmeta: C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\lib.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\extra_assert.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\const_init.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\neighbors.rs C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\imp_wasm32.rs
+
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\lib.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\extra_assert.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\const_init.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\neighbors.rs:
+C:\Users\Маруся\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wee_alloc-0.4.5\src\imp_wasm32.rs:

@@ -1,0 +1,1 @@
+mklink /J C:\rs_tc "C:\Users\Маруся\.rustup\toolchains\stable-x86_64-pc-windows-gnu"
