@@ -1,6 +1,6 @@
 use near_sdk::{
     near, env, NearToken, Promise, PromiseOrValue, Gas,
-    json_types::U128, AccountId, store::UnorderedMap, store::LookupMap, store::Vector,
+    json_types::U128, AccountId, store::LookupMap, store::Vector,
     ext_contract,
 };
 use serde::{Deserialize, Serialize};
@@ -8,7 +8,7 @@ use borsh::{BorshSerialize, BorshDeserialize};
 
 pub type TokenId = String;
 
-// Config
+// Lock periods in seconds
 pub const LOCK_10D: u64 = 864_000;
 pub const LOCK_20D: u64 = 1_728_000;
 pub const LOCK_30D: u64 = 2_592_000;
@@ -46,11 +46,11 @@ pub struct Metadata {
 }
 
 #[near(contract_state)]
-#[derive(BorshSerialize, BorshDeserialize)]
 pub struct Contract {
     pub owner_id: AccountId,
-    pub stakes: UnorderedMap<TokenId, Stake>,
+    pub stakes: LookupMap<TokenId, Stake>,
     pub user_stakes: LookupMap<AccountId, Vector<TokenId>>,
+    pub all_stakes: Vector<TokenId>,
     pub total_staked: u64,
     pub reward_pool: u128,
     pub epoch_duration: u64,
@@ -62,8 +62,9 @@ impl Default for Contract {
     fn default() -> Self {
         Self {
             owner_id: "placeholder.near".parse().unwrap(),
-            stakes: UnorderedMap::new(b"s"),
+            stakes: LookupMap::new(b"s"),
             user_stakes: LookupMap::new(b"u"),
+            all_stakes: Vector::new(b"a"),
             total_staked: 0,
             reward_pool: 0,
             epoch_duration: 86_400,
@@ -118,7 +119,7 @@ impl Contract {
         self.epoch_duration = secs;
     }
 
-    // Stake
+    // Stake entry
     pub fn stake(&mut self, nft_contract_id: AccountId, token_id: TokenId, lock_duration_sec: u64) -> Promise {
         let owner = env::predecessor_account_id();
         let msg = format!("{}:{}", lock_duration_sec, owner);
@@ -177,6 +178,7 @@ impl Contract {
         });
         list.push(token_id.clone());
         self.user_stakes.insert(owner.clone(), list);
+        self.all_stakes.push(token_id.clone());
         self.total_staked += 1;
 
         env::log_str(&format!(
@@ -201,18 +203,25 @@ impl Contract {
         self.stakes.remove(&token_id);
 
         if let Some(mut list) = self.user_stakes.get(&owner) {
-            let mut ids: Vec<TokenId> = Vec::new();
-            for t in list.iter() {
-                if t != &token_id {
-                    ids.push(t.clone());
-                }
-            }
+            let ids: Vec<TokenId> = list.to_vec();
             let mut nv = Vector::new(format!("us{}", owner).as_bytes());
-            for id in ids {
-                nv.push(id);
+            for t in ids {
+                if t != token_id {
+                    nv.push(t);
+                }
             }
             self.user_stakes.insert(owner.clone(), nv);
         }
+
+        // Remove from all_stakes
+        let all: Vec<TokenId> = self.all_stakes.to_vec();
+        let mut nv2 = Vector::new(b"a");
+        for t in all {
+            if t != token_id {
+                nv2.push(t);
+            }
+        }
+        self.all_stakes = nv2;
         self.total_staked -= 1;
 
         env::log_str(&format!(
@@ -256,16 +265,18 @@ impl Contract {
         let ts = self.total_staked as u128;
         let mut pending_add: Vec<(AccountId, u128)> = Vec::new();
 
-        for stake_val in self.stakes.values() {
-            if !self.is_active(&stake_val) { continue; }
-            let owner_count = self.user_stakes.get(&stake_val.owner_id)
-                .map(|v| v.len() as u128)
-                .unwrap_or(0);
-            if owner_count == 0 { continue; }
-            let share = pool * owner_count / ts;
-            if share > 0 {
-                let prev = self.pending.get(&stake_val.owner_id).unwrap_or(0);
-                pending_add.push((stake_val.owner_id.clone(), prev + share));
+        for tid in self.all_stakes.iter() {
+            if let Some(stake) = self.stakes.get(&tid) {
+                if !self.is_active(&stake) { continue; }
+                let owner_count = self.user_stakes.get(&stake.owner_id)
+                    .map(|v| v.len() as u128)
+                    .unwrap_or(0);
+                if owner_count == 0 { continue; }
+                let share = pool * owner_count / ts;
+                if share > 0 {
+                    let prev = self.pending.get(&stake.owner_id).unwrap_or(0);
+                    pending_add.push((stake.owner_id.clone(), prev + share));
+                }
             }
         }
 
@@ -349,5 +360,4 @@ pub trait NftContract {
         msg: String,
         memo: Option<String>,
     ) -> Promise;
-}  
-  
+}
