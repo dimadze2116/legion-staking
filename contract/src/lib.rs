@@ -1,25 +1,10 @@
 use near_sdk::{
-    borsh::{self, BorshDeserialize, BorshSerialize},
-    collections::{LookupMap, UnorderedMap},
-    json_types::U128,
-    near, store::Vector,
-    AccountId, Balance, Gas, Promise, PromiseOrValue,
+    near, store::{LookupMap, Vector}, env, log, NearToken, Promise, PromiseOrValue,
+    json_types::U128, AccountId, Gas,
 };
 use serde::{Deserialize, Serialize};
 
 pub type TokenId = String;
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct Stake {
-    pub token_id: TokenId,
-    pub nft_contract_id: AccountId,
-    pub owner_id: AccountId,
-    pub staked_at: u64,
-    pub lock_duration: u64,
-    pub unlocked_at: u64,
-    pub last_claim_epoch: u64,
-    pub active: bool,
-}
 
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -37,85 +22,89 @@ pub struct StakeView {
 #[serde(crate = "near_sdk::serde")]
 pub struct ContractMetadata {
     pub owner_id: AccountId,
-    pub reward_token: AccountId,
     pub total_staked: u64,
     pub reward_pool: U128,
     pub epoch_duration: u64,
 }
 
-#[near(contract_state, serializers = [borsh])]
-#[derive(BorshSerialize, BorshDeserialize)]
+#[near(contract_state)]
 pub struct StakingContract {
-    pub owner_id: AccountId,
-    pub reward_token: AccountId,
-    pub stakes: UnorderedMap<TokenId, Stake>,
-    pub user_stakes: LookupMap<AccountId, Vector<TokenId>>,
-    pub total_staked: u64,
-    pub reward_pool: Balance,
-    pub epoch_duration: u64,
-    pub last_epoch_update: u64,
-    pub epoch_rewards: LookupMap<AccountId, Balance>,
+    owner_id: AccountId,
+    stakes: LookupMap<TokenId, TokenStake>,
+    user_stakes: LookupMap<AccountId, Vector<TokenId>>,
+    total_staked: u64,
+    reward_pool: NearToken,
+    epoch_duration: u64,
+    last_update: u64,
+    pending: LookupMap<AccountId, NearToken>,
+}
+
+struct TokenStake {
+    owner_id: AccountId,
+    token_id: TokenId,
+    nft_contract: AccountId,
+    staked_at: u64,
+    lock_duration: u64,
+    unlocked_at: u64,
+    last_epoch: u64,
 }
 
 #[near]
 impl StakingContract {
     #[init]
-    pub fn new(owner_id: AccountId, reward_token: AccountId) -> Self {
+    pub fn new(owner_id: AccountId) -> Self {
+        let now = env::block_timestamp() / 1_000_000_000;
         Self {
             owner_id,
-            reward_token,
-            stakes: UnorderedMap::new(b"s"),
+            stakes: LookupMap::new(b"s"),
             user_stakes: LookupMap::new(b"u"),
             total_staked: 0,
-            reward_pool: 0,
+            reward_pool: NearToken::from_yoctonear(0),
             epoch_duration: 86400,
-            last_epoch_update: near_sdk::env::block_timestamp() / 1_000_000_000,
-            epoch_rewards: LookupMap::new(b"r"),
+            last_update: now,
+            pending: LookupMap::new(b"p"),
         }
     }
 
-    // --- Admin ---
     #[payable]
     pub fn deposit_rewards(&mut self) {
         self.assert_owner();
-        let deposit = near_sdk::env::attached_deposit();
-        assert!(deposit > 0, "Must attach NEAR");
-        self.reward_pool += deposit;
+        self.reward_pool = self.reward_pool
+            .checked_add(env::attached_deposit())
+            .expect("Overflow");
     }
 
     pub fn unstake(&mut self, token_id: TokenId) -> Promise {
-        let owner_id = near_sdk::env::predecessor_account_id();
-        let stake = self.stakes.get(&token_id).unwrap_or_else(|| near_sdk::env::panic_str("Not found"));
-        assert_eq!(stake.owner_id, owner_id, "Not yours");
-
-        self.process_rewards();
+        let owner = env::predecessor_account_id();
+        let stake = self.stakes.get(&token_id)
+            .unwrap_or_else(|| env::panic_str("Stake not found"));
+        assert_eq!(stake.owner_id, owner, "Not yours");
+        self.calc();
         self.stakes.remove(&token_id);
-
-        if let Some(mut list) = self.user_stakes.get(&owner_id) {
-            let new_ids: Vec<TokenId> = list.iter().filter(|t| t != &token_id).collect();
-            let mut updated = Vector::new(format!("u:{}", owner_id).as_bytes());
-            for tid in new_ids { updated.push(&tid); }
-            self.user_stakes.insert(&owner_id, &updated);
+        if let Some(mut list) = self.user_stakes.get(&owner) {
+            let ids: Vec<TokenId> = list.iter().filter(|t| t != &&token_id).cloned().collect();
+            let mut nv = Vector::new(format!("u{owner}").as_bytes());
+            for id in ids { nv.push(&id); }
+            self.user_stakes.insert(owner.clone(), nv);
         }
         self.total_staked -= 1;
-
-        Self::ext(stake.nft_contract_id.clone())
-            .with_attached_deposit(1)
-            .with_static_gas(Gas(10_000_000_000_000))
-            .nft_transfer(owner_id.clone(), token_id, None::<String>)
+        nft_ext::ext(stake.nft_contract)
+            .with_attached_deposit(NearToken::from_yoctonear(1))
+            .with_static_gas(Gas::from_tgas(10))
+            .nft_transfer(owner, token_id, None)
     }
 
     pub fn claim(&mut self) -> Promise {
-        let owner_id = near_sdk::env::predecessor_account_id();
-        self.process_rewards();
-        let amount = self.epoch_rewards.get(&owner_id).unwrap_or(0);
-        assert!(amount > 0, "No rewards");
-        self.epoch_rewards.insert(&owner_id, &0);
-        self.reward_pool -= amount;
-        near_sdk::Promise::new(owner_id).transfer(amount)
+        let owner = env::predecessor_account_id();
+        self.calc();
+        let amount = self.pending.get(&owner).cloned()
+            .unwrap_or(NearToken::from_yoctonear(0));
+        assert!(amount.as_yoctonear() > 0, "No rewards");
+        self.pending.insert(owner.clone(), NearToken::from_yoctonear(0));
+        self.reward_pool = self.reward_pool.checked_sub(amount).expect("Underflow");
+        Promise::new(owner).transfer(amount)
     }
 
-    // --- NFT callback ---
     #[private]
     pub fn nft_on_transfer(
         &mut self,
@@ -126,100 +115,129 @@ impl StakingContract {
     ) -> PromiseOrValue<bool> {
         let parts: Vec<&str> = msg.split(':').collect();
         if parts.len() < 2 { return PromiseOrValue::Value(false); }
-        let lock_duration: u64 = match parts[0].parse() { Ok(v) => v, _ => return PromiseOrValue::Value(false) };
-        let owner_id: AccountId = match parts[1].parse() { Ok(v) => v, _ => return PromiseOrValue::Value(false) };
-        if lock_duration != 864000 && lock_duration != 1728000 && lock_duration != 2592000 {
+        let dur: u64 = match parts[0].parse() { Ok(v) => v, _ => return PromiseOrValue::Value(false) };
+        let owner: AccountId = match parts[1].parse() { Ok(v) => v, _ => return PromiseOrValue::Value(false) };
+        if dur != 864000 && dur != 1728000 && dur != 2592000 {
             return PromiseOrValue::Value(false);
         }
-        let nft = near_sdk::env::predecessor_account_id();
-        let now = near_sdk::env::block_timestamp() / 1_000_000_000;
-        let stake = Stake {
-            owner_id: owner_id.clone(),
+        let nft = env::predecessor_account_id();
+        let now = env::block_timestamp() / 1_000_000_000;
+        let stake = TokenStake {
+            owner_id: owner.clone(),
             token_id: token_id.clone(),
-            nft_contract_id: nft,
+            nft_contract: nft,
             staked_at: now,
-            lock_duration,
-            unlocked_at: now + lock_duration,
-            last_claim_epoch: self.to_epoch(now),
-            active: true,
+            lock_duration: dur,
+            unlocked_at: now + dur,
+            last_epoch: now / self.epoch_duration,
         };
-        if self.stakes.insert(&token_id, &stake).is_some() {
+        if self.stakes.insert(token_id.clone(), stake).is_some() {
             return PromiseOrValue::Value(false);
         }
-        let mut list = self.user_stakes.get(&owner_id).unwrap_or_else(|| {
-            Vector::new(format!("u:{}", owner_id).as_bytes())
-        });
+        let mut list = self.user_stakes.get(&owner).unwrap_or_else(||
+            Vector::new(format!("u{owner}").as_bytes())
+        );
         list.push(&token_id);
-        self.user_stakes.insert(&owner_id, &list);
+        self.user_stakes.insert(owner, list);
         self.total_staked += 1;
         PromiseOrValue::Value(true)
     }
 
-    // --- Rewards ---
-    fn process_rewards(&mut self) {
-        let now = near_sdk::env::block_timestamp() / 1_000_000_000;
-        let cur = self.to_epoch(now);
-        if cur <= self.last_epoch_update { return; }
-        if self.total_staked == 0 || self.reward_pool == 0 {
-            self.last_epoch_update = cur;
-            return;
-        }
-        for stake in self.stakes.values() {
-            if !stake.active { continue; }
-            let end = self.to_epoch(stake.unlocked_at);
-            let claim_until = end.min(cur);
-            if claim_until <= stake.last_claim_epoch { continue; }
-            let user_count = self.user_stakes.get(&stake.owner_id).map(|v| v.len()).unwrap_or(0) as u128;
-            if user_count == 0 { continue; }
-            let reward = self.reward_pool * user_count / (self.total_staked as u128);
-            if reward > 0 {
-                let prev = self.epoch_rewards.get(&stake.owner_id).unwrap_or(0);
-                self.epoch_rewards.insert(&stake.owner_id, &(prev + reward));
+    fn calc(&mut self) {
+        let now = env::block_timestamp() / 1_000_000_000;
+        let cur = now / self.epoch_duration;
+        if cur <= self.last_update || self.total_staked == 0 { return; }
+        let pool = self.reward_pool.as_yoctonear();
+        if pool == 0 { self.last_update = cur; return; }
+        for entry in self.stakes.iter() {
+            let (tid, stake) = entry;
+            if !stake.active() { continue; }
+            let end = stake.unlocked_at / self.epoch_duration;
+            let until = end.min(cur);
+            if until <= stake.last_epoch { continue; }
+            let owner_stakes = self.user_stakes.get(&stake.owner_id)
+                .map(|v| v.len() as u128).unwrap_or(0);
+            if owner_stakes == 0 { continue; }
+            let share = pool * owner_stakes / self.total_staked as u128;
+            if share > 0 {
+                let prev = self.pending.get(&stake.owner_id).cloned()
+                    .unwrap_or(NearToken::from_yoctonear(0));
+                self.pending.insert(stake.owner_id.clone(),
+                    prev.checked_add(NearToken::from_yoctonear(share)).unwrap());
             }
         }
-        self.last_epoch_update = cur;
+        self.last_update = cur;
     }
 
-    // --- Views ---
     pub fn get_user_stakes(&self, account_id: AccountId) -> Vec<StakeView> {
         self.user_stakes.get(&account_id).map(|list| {
             list.iter().filter_map(|tid| {
                 self.stakes.get(&tid).map(|s| StakeView {
                     owner_id: s.owner_id,
                     token_id: s.token_id,
-                    nft_contract_id: s.nft_contract_id,
+                    nft_contract_id: s.nft_contract,
                     staked_at: s.staked_at,
                     lock_duration: s.lock_duration,
                     unlocked_at: s.unlocked_at,
-                    active: s.active,
+                    active: s.active(),
                 })
             }).collect()
         }).unwrap_or_default()
     }
 
     pub fn get_user_rewards(&self, account_id: AccountId) -> U128 {
-        U128::from(self.epoch_rewards.get(&account_id).unwrap_or(0))
+        let v = self.pending.get(&account_id).cloned()
+            .unwrap_or(NearToken::from_yoctonear(0));
+        U128::from(v.as_yoctonear())
     }
 
-    pub fn get_contract_metadata(&self) -> ContractMetadata {
+    pub fn get_metadata(&self) -> ContractMetadata {
         ContractMetadata {
             owner_id: self.owner_id.clone(),
-            reward_token: self.reward_token.clone(),
             total_staked: self.total_staked,
-            reward_pool: U128::from(self.reward_pool),
+            reward_pool: U128::from(self.reward_pool.as_yoctonear()),
             epoch_duration: self.epoch_duration,
         }
     }
 
-    fn to_epoch(&self, ts: u64) -> u64 { ts / self.epoch_duration }
     fn assert_owner(&self) {
-        assert_eq!(near_sdk::env::predecessor_account_id(), self.owner_id, "Only owner");
+        assert_eq!(env::predecessor_account_id(), self.owner_id, "Only owner");
     }
 }
 
-#[near(protocol = "ext")]
-pub mod nft_contract {
-    use near_sdk::PromiseOrValue;
-    pub fn nft_transfer(receiver_id: AccountId, token_id: String, memo: Option<String>) -> Promise;
-    pub fn nft_transfer_call(receiver_id: AccountId, token_id: String, msg: String, memo: Option<String>) -> PromiseOrValue<bool>;
+// --- NFT interface ---
+#[near(contract_state)]
+pub struct TokenStake {
+    owner_id: AccountId,
+    token_id: TokenId,
+    nft_contract: AccountId,
+    staked_at: u64,
+    lock_duration: u64,
+    unlocked_at: u64,
+    last_epoch: u64,
+}
+
+impl TokenStake {
+    fn active(&self) -> bool {
+        let now = env::block_timestamp() / 1_000_000_000;
+        self.unlocked_at > now || self.staked_at + self.lock_duration > now
+    }
+}
+
+#[near]
+mod nft_ext {
+    use near_sdk::{Promise, AccountId, PromiseOrValue};
+
+    pub fn nft_transfer(
+        receiver_id: AccountId,
+        token_id: String,
+        memo: Option<String>,
+    ) -> Promise;
+
+    pub fn nft_transfer_call(
+        receiver_id: AccountId,
+        token_id: String,
+        msg: String,
+        memo: Option<String>,
+    ) -> PromiseOrValue<bool>;
 }
