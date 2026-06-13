@@ -57,21 +57,30 @@ pub struct Contract {
     pending: LookupMap<AccountId, u128>,
 }
 
-#[near]
-impl Contract {
-    #[init]
-    pub fn new(owner_id: AccountId) -> Self {
+impl Default for Contract {
+    fn default() -> Self {
         Self {
-            owner_id,
+            owner_id: "placeholder.near".parse().unwrap(),
             stakes: LookupMap::new(b"s"),
             user_stakes: LookupMap::new(b"u"),
             all_stakes: Vector::new(b"a"),
             total_staked: 0,
             reward_pool: 0,
             epoch_duration: 86_400,
-            last_update: env::block_timestamp() / 86_400_000_000_000,
+            last_update: 0,
             pending: LookupMap::new(b"p"),
         }
+    }
+}
+
+#[near]
+impl Contract {
+    #[init]
+    pub fn new(owner_id: AccountId) -> Self {
+        let mut c = Self::default();
+        c.owner_id = owner_id;
+        c.last_update = env::block_timestamp() / 86_400_000_000_000;
+        c
     }
 
     fn only_owner(&self) {
@@ -156,10 +165,10 @@ impl Contract {
             return PromiseOrValue::Value(false);
         }
 
-        let prefix = format!("us{}", &owner);
         let items: Vec<TokenId> = self.user_stakes.get(&owner)
             .map(|v| v.iter().map(|t| t.clone()).collect())
             .unwrap_or_default();
+        let prefix = format!("us{}", &owner);
         let mut list = Vector::new(prefix.as_bytes());
         for t in items { list.push(t); }
         list.push(token_id.clone());
@@ -172,7 +181,6 @@ impl Contract {
 
     pub fn unstake(&mut self, token_id: TokenId) -> Promise {
         let owner = env::predecessor_account_id();
-
         let existing = self.stakes.get(&token_id)
             .unwrap_or_else(|| env::panic_str("not found"));
         assert_eq!(existing.owner_id, owner, "not yours");
@@ -182,10 +190,10 @@ impl Contract {
         self.calc_rewards();
         self.stakes.remove(&token_id);
 
-        let prefix = format!("us{}", &owner);
         let items: Vec<TokenId> = self.user_stakes.get(&owner)
             .map(|v| v.iter().map(|t| t.clone()).collect())
             .unwrap_or_default();
+        let prefix = format!("us{}", &owner);
         let mut nv = Vector::new(prefix.as_bytes());
         for t in items {
             if t != token_id { nv.push(t); }
