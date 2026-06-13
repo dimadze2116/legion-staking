@@ -74,6 +74,15 @@ impl Default for Contract {
     }
 }
 
+/// Helper: copy tokens from a Vector into a Vec (cloning each)
+fn clone_token_vec(v: &Vector<TokenId>) -> Vec<TokenId> {
+    let mut res = Vec::new();
+    for t in v.iter() {
+        res.push(t.clone());
+    }
+    res
+}
+
 #[near]
 impl Contract {
     #[init]
@@ -134,15 +143,6 @@ impl Contract {
             )
     }
 
-    // Collect TokenIds from a Vector into a Vec
-    fn collect_tokens(v: &Vector<TokenId>) -> Vec<TokenId> {
-        let mut res = Vec::new();
-        for t in v.iter() {
-            res.push(t);
-        }
-        res
-    }
-
     // NFT callback
     #[private]
     pub fn nft_on_transfer(
@@ -182,9 +182,9 @@ impl Contract {
             return PromiseOrValue::Value(false);
         }
 
-        let items = Self::collect_tokens(
-            self.user_stakes.get(&owner).unwrap_or(&Vector::new(format!("us{}", owner).as_bytes()))
-        );
+        let items = self.user_stakes.get(&owner)
+            .map(|v| clone_token_vec(&v))
+            .unwrap_or_default();
         let mut list = Vector::new(format!("us{}", owner).as_bytes());
         for t in items {
             list.push(t);
@@ -215,18 +215,18 @@ impl Contract {
         self.calc_rewards();
         self.stakes.remove(&token_id);
 
-        if let Some(list) = self.user_stakes.get(&owner) {
-            let items = Self::collect_tokens(list);
-            let mut nv = Vector::new(format!("us{}", owner).as_bytes());
-            for t in items {
-                if t != token_id {
-                    nv.push(t);
-                }
+        let items = self.user_stakes.get(&owner)
+            .map(|v| clone_token_vec(&v))
+            .unwrap_or_default();
+        let mut nv = Vector::new(format!("us{}", owner).as_bytes());
+        for t in items {
+            if t != token_id {
+                nv.push(t);
             }
-            self.user_stakes.insert(owner.clone(), nv);
         }
+        self.user_stakes.insert(owner.clone(), nv);
 
-        let all = Self::collect_tokens(&self.all_stakes);
+        let all = clone_token_vec(&self.all_stakes);
         let mut nv2 = Vector::new(b"a");
         for t in all {
             if t != token_id {
@@ -279,7 +279,7 @@ impl Contract {
 
         for tid in self.all_stakes.iter() {
             if let Some(stake) = self.stakes.get(&tid) {
-                if !self.is_active(stake) { continue; }
+                if !self.is_active(&stake) { continue; }
                 let owner_count = self.user_stakes.get(&stake.owner_id)
                     .map(|v| v.len() as u128)
                     .unwrap_or(0);
@@ -303,7 +303,7 @@ impl Contract {
         let mut result = Vec::new();
         if let Some(list) = self.user_stakes.get(&account_id) {
             for tid in list.iter() {
-                if let Some(s) = self.stakes.get(&tid) {
+                if let Some(s) = self.stakes.get(tid) {
                     result.push(StakeView {
                         owner_id: s.owner_id.clone(),
                         token_id: s.token_id.clone(),
@@ -311,7 +311,7 @@ impl Contract {
                         staked_at: s.staked_at,
                         lock_duration: s.lock_duration,
                         unlocked_at: s.unlocked_at,
-                        active: self.is_active(s),
+                        active: self.is_active(&s),
                     });
                 }
             }
@@ -341,7 +341,7 @@ impl Contract {
                 staked_at: s.staked_at,
                 lock_duration: s.lock_duration,
                 unlocked_at: s.unlocked_at,
-                active: self.is_active(s),
+                active: self.is_active(&s),
             })
         } else {
             None
