@@ -278,7 +278,7 @@ impl Contract {
         let mut pending_add: Vec<(AccountId, u128)> = Vec::new();
 
         for tid in self.all_stakes.iter() {
-            if let Some(stake) = self.stakes.get(&tid) {
+            if let Some(stake) = self.stakes.get(tid) {
                 if !self.is_active(&stake) { continue; }
                 let owner_count = self.user_stakes.get(&stake.owner_id)
                     .map(|v| v.len() as u128)
